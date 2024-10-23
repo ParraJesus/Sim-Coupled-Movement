@@ -1,0 +1,244 @@
+:root {
+    --color-background-0: #fff;
+    --color-background-1: #f0f0f0;
+    --color-background-2: #7898a8;
+    --color-background-3: #686898;
+    --color-background-5: #7085a4;
+    --color-background-4: #e09363;
+    --font-color-0: #fff;
+    --font-color-1: #444;
+    --font-color-2: #666;
+    --shadow-color-1: #0006;
+    --shadow-color-2: #000A;
+    --font-size: 12px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: sans-serif;
+    line-height: 1.6;
+    color: var(--font-color-2);
+    background-color: var(--color-background-0);
+
+}
+
+h1 {
+    text-align: center;
+    text-wrap: pretty;
+    padding: 10px 0 10px 0;
+}
+
+h2 {
+    margin-bottom: 15px;
+    color: var(--color-background-3);
+    text-transform: capitalize;
+}
+
+header{
+    background-color: var(--color-background-2);
+    color: var(--font-color-0);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0 0 20px;
+}
+
+.header-list{
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+}
+
+.header-item {
+    list-style: none;
+}
+
+.header-link {
+    display: inline-block;
+    align-content: center;
+    text-align: center;
+    background-color: var(--color-background-5);
+    color: var(--font-color-0);
+    text-decoration: none;
+    padding: 30px 10px;
+    transition: background-color 0.2s, text-decoration 0.2s;
+}
+
+.header-link:is(:hover, :active) {
+    color: var(--font-color-0);
+    background-color: var(--color-background-3);
+    text-decoration: underline;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.controls-section, .simulation-section, .graphs-section, .variables-section {
+    background-color: var(--color-background-1);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: box-shadow 0.3s;
+}
+
+.shadow-transition:is(:hover)
+{
+    box-shadow: 0 0 10px #0006;
+}
+
+.slider-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.slider-container {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="range"] {
+    width: 100%;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+button {
+    padding: 12px 40px;
+    background-color: var(--color-background-2);
+    color: var(--color-background-0);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 1.2rem;
+}
+
+button:hover{
+    opacity: 70%;
+}
+
+.simulation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sim__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 500px;
+}
+
+canvas {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    width: 100% !important;
+    height: auto !important;
+}
+
+.graphs-container
+{
+    background-color: var(--color-background-1);
+    min-height: 400px;
+}
+
+.variables__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.variable {
+    background-color: var(--color-background-0);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.variable__label {
+    font-weight: bold;
+    color: var(--color-background-3);
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: var(--color-background-2);
+    color: var(--font-color-0);
+    margin-top: 20px;
+}
+
+header, footer
+{
+    box-shadow: 0 0 10px var(--shadow-color-2);
+    width: 100%;
+}
+
+/* Equations Section */	
+
+.equations-section {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: var(--color-background-1);
+    border-radius: 8px;
+}
+
+.equations__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.equation {
+    display: flex;
+    flex-direction: column;
+}
+
+.equation__label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.equation__value {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+    .slider-group {
+        grid-template-columns: 1fr;
+    }
+    header {
+        flex-direction: column;
+        justify-content: center;
+        padding: 0;
+    }
+    h1 {
+        padding: 10px;
+    }
+}
