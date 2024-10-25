@@ -2,14 +2,16 @@
 let barra_l = 10;
 let barra_m = 0;
 let esfera_m = 0;
-let k0 = 0;
 let k1 = 0;
 let k2 = 0;
+let k3 = 0;
+
+let I = 0;
 
 //Datos Calculados
 let barraPosActual = 0, barraVelActual = 0, barraAceleActual = 0;
 let esferaPosActual = 0, esferaVelActual = 0, esferaAceleActual = 0;
-
+let amplitud = 0;
 //Datos sim
 let t = 0;
 let dt = 0.2;
@@ -28,9 +30,10 @@ document.addEventListener('inputDataUpdated', function(e) {
     barra_m = parseFloat(inputData.barra_masa);
     barra_l = parseFloat(inputData.barra_longitud);
     esfera_m = parseFloat(inputData.esfera_masa);
-    k0 = parseFloat(inputData.k1);
-    k1 = parseFloat(inputData.k2);
-    k2 = parseFloat(inputData.k3);
+    k1 = parseFloat(inputData.k1);
+    k2 = parseFloat(inputData.k2);
+    k3 = parseFloat(inputData.k3);
+    I = (barra_m*(barra_l*barra_l))/12;
 });
 
 document.addEventListener('startAnimation', function(e) {
@@ -178,7 +181,7 @@ function calcularFrecuenciasNaturales() {
 
     let a = I*esfera_m;  // a = Im
     
-    let b = (-I*(k2 + k3) - m*(k1*barra_l*barra_l/4 + k2*barra_l*barra_l/4));  // b = (-I(k1 + k2) - m[kl²/4 + k1l²/4])
+    let b = (-I*(k2 + k3) - esfera_m*(k1*barra_l*barra_l/4 + k2*barra_l*barra_l/4));  // b = (-I(k1 + k2) - m[kl²/4 + k1l²/4])
     
     let c = ((k1*barra_l*barra_l/4 + k2*barra_l*barra_l/4)*(k2 + k3) - Math.pow(k2*barra_l/2, 2));  // c = [kl²/4 + k1l²/4](k1 + k2) - (k1l/2)²
     
@@ -191,20 +194,39 @@ function calcularFrecuenciasNaturales() {
     
 }
 
+function calcularAmplitud(omega){
+
+    let I = (barra_m*(barra_l*barra_l))/12;
+    amplitud = (k2*barra_l/2)/[-I*omega*omega + k1*(barra_l*barra_l/4) + k2*(barra_l*barra_l/4)]; // A/B
+    console.log('A/B = ' + amplitud);
+
+    return amplitud;
+
+}
+
+function primerModoVibracion(){
+    
+}
+
 //document.getElementById('').innerHTML = ``; //Fórmula document.getElementById('').innerHTML = ``; //Valor
 
 function inicializarEcuaciones(){
     //Variables
     let I = (barra_m*(barra_l*barra_l))/12;
 
-    let a = I*m;
-    let b = (-I*(k1 + k2) - m*(k0*l*l/4 + k1*l*l/4));
-    let c = ((k0*l*l/4 + k1*l*l/4)*(k1 + k2) - Math.pow(k1*l/2, 2));
+    let a = I*esfera_m;  // a = Im
     
+    let b = (-I*(k2 + k3) - esfera_m*(k1*barra_l*barra_l/4 + k2*barra_l*barra_l/4));  // b = (-I(k1 + k2) - m[kl²/4 + k1l²/4])
+    
+    let c = ((k1*barra_l*barra_l/4 + k2*barra_l*barra_l/4)*(k2 + k3) - Math.pow(k2*barra_l/2, 2));  // c = [kl²/4 + k1l²/4](k1 + k2) - (k1l/2)²
+    
+    // Calcular las frecuencias usando la fórmula cuadrática
     let omega1 = Math.sqrt((-b + Math.sqrt(b*b - 4*a*c))/(2*a));
     let omega2 = Math.sqrt((-b - Math.sqrt(b*b - 4*a*c))/(2*a));
 
-
+    let amplitud1 = calcularAmplitud(omega1);
+    let amplitud2 = calcularAmplitud(omega2);
+    
     //Lagrangriano
     document.getElementById('formula_lagrangiano').innerHTML = `L = (1/2)I(θ')² + (1/2)m(x')² - [(1/2)k₀(l/2θ)² + (1/2)k₁(l/2θ + x)² + (1/2)k₂x² + mgx]`; //Fórmula
     document.getElementById('formula_evaluada_lagrangiano').innerHTML = `L = `; //Valor
@@ -235,4 +257,7 @@ function inicializarEcuaciones(){
     document.getElementById('formula_evaluada_frecuencia_1').innerHTML = `${omega1}`; //Valor
     document.getElementById('formula_evaluada_frecuencia_2').innerHTML = `${omega2}`; //Valor
 
+    
+    document.getElementById('amplitud1').innerHTML = `${amplitud1}`; //Valor
+    document.getElementById('amplitud2').innerHTML = `${amplitud2}`; //Valor
 }
