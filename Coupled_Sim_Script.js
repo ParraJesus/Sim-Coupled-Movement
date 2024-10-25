@@ -328,7 +328,7 @@ function calcularAmplitud(omega) {
 
     console.log('----------------------------');
 
-    return amplitud;
+    return -amplitud;
 
 }
 
