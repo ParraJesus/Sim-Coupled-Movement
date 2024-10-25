@@ -1,8 +1,13 @@
 const updateDataButton = document.getElementById("updateDataButton");
 const startAnimButton = document.getElementById("startAnimButton");
+
+const generalModeButton = document.getElementById("generalMode");
+const firstModeButton = document.getElementById("firstMode");
+const secondModeButton = document.getElementById("secondMode");
+
+let currentMode = 0;
 let isAnimationPlaying = false;
 
-//  inicializa los sliders a conveniencia, recibe el id del range y del texto mostrado en pantalla, además de un máximo y un mínimo para los valores iniciales
 function initializeInput(inputId) 
 {
     const input = document.getElementById(inputId);
@@ -10,6 +15,58 @@ function initializeInput(inputId)
     input.addEventListener("input", function() {
         updateDataButton.style.backgroundColor = "#e09363";
     });
+}
+
+generalModeButton.style.backgroundColor = "#686898";
+function vibrationMode_0()
+{
+    currentMode = 0;
+    const data = {
+        mode: currentMode
+    };
+    const onModeUpdated = new CustomEvent('modeUpdated', {
+        detail: data
+    });
+
+    generalModeButton.style.backgroundColor = "#686898";
+    firstModeButton.style.backgroundColor = "#7898a8";
+    secondModeButton.style.backgroundColor = "#7898a8";
+
+    document.dispatchEvent(onModeUpdated);
+}
+
+function vibrationMode_1()
+{
+    currentMode = 1;
+    const data = {
+        mode: currentMode
+    };
+    const onModeUpdated = new CustomEvent('modeUpdated', {
+        detail: data
+    });
+
+    firstModeButton.style.backgroundColor = "#686898";
+    generalModeButton.style.backgroundColor = "#7898a8";
+    secondModeButton.style.backgroundColor = "#7898a8";
+
+    document.dispatchEvent(onModeUpdated);
+}
+
+function vibrationMode_2()
+{
+    currentMode = 2;
+    const data = {
+        mode: currentMode
+    };
+    const onModeUpdated = new CustomEvent('modeUpdated', {
+        detail: data
+    });
+    
+    secondModeButton.style.backgroundColor = "#686898";
+    firstModeButton.style.backgroundColor = "#7898a8";
+    generalModeButton.style.backgroundColor = "#7898a8";
+
+    document.dispatchEvent(onModeUpdated);
 }
 
 //  almacena en una variable la información de los input range
@@ -61,3 +118,7 @@ initializeInput("sphere_initial_pos_input");
 
 updateDataButton.addEventListener("click", getInputData);
 startAnimButton.addEventListener("click", startAnim);
+
+generalModeButton.addEventListener("click", vibrationMode_0);
+firstModeButton.addEventListener("click", vibrationMode_1);
+secondModeButton.addEventListener("click", vibrationMode_2);
