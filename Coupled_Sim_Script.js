@@ -245,8 +245,6 @@ function primerModoVibracion(){
 
 function inicializarEcuaciones(){
     //Variables
-    
-
     let I = (barra_m*(barra_l*barra_l))/12;
 
     let a = I*esfera_m;  // a = Im
@@ -266,14 +264,14 @@ function inicializarEcuaciones(){
     
     //Lagrangriano
     document.getElementById('formula_lagrangiano').innerHTML = `L = (1/2)I(θ')² + (1/2)m(x')² - [(1/2)k₀(l/2θ)² + (1/2)k₁(l/2θ + x)² + (1/2)k₂x² + mgx]`; //Fórmula
-    document.getElementById('formula_evaluada_lagrangiano').innerHTML = `L = `; //Valor
+    document.getElementById('formula_evaluada_lagrangiano').innerHTML = `L = (1/2)(${I.toFixed(3)})(θ')² + (1/2)(${esfera_m})(x')² - [(1/2)(${k1})(l/2θ)² + (1/2)(${k2})(l/2θ + x)² + (1/2)(${k3})x² + (${esfera_m})(9.8)x]`; //Valor
 
     //Ecuaciones Diferenciales
     document.getElementById('formula_ED_1').innerHTML = `I(θ'') + (k₀l²/4)θ + (k₁l²/4)θ + (k₁l/2)x = 0`; //Fórmula
     document.getElementById('formula_ED_2').innerHTML = `m(x'') + (k₁l/2)θ + (k₁ + k₂)x + mg = 0`; //Fórmula
 
-    document.getElementById('formula_evaluada_ED_1').innerHTML = ``; //valor
-    document.getElementById('formula_evaluada_ED_1').innerHTML = ``; //Valor
+    document.getElementById('formula_evaluada_ED_1').innerHTML = `I(θ'') + ((${k1})(${barra_l})²/4)θ + ((${k2})(${barra_l})²/4)θ + ((${k2})(${barra_l})/2)x = 0`; //valor
+    document.getElementById('formula_evaluada_ED_2').innerHTML = `(${esfera_m})(x'') + ((${k2})(${barra_l})/2)θ + ((${k2}) + (${k3}))x + (${esfera_m})(9.8) = 0`; //Valor
     
     //Frecuencias naturales
     document.getElementById('formula_general_frecuencia_1').innerHTML = `aω⁴ + bω² + c = 0`; //Fórmula
@@ -298,7 +296,11 @@ function inicializarEcuaciones(){
     document.getElementById('amplitud1').innerHTML = `A₁/B₁ = ${amplitud1}`; //Valor
     document.getElementById('amplitud2').innerHTML = `A₂/B₂ = ${amplitud2}`; //Valor
 
-    //Fórmula de osciladores
+    //Fórmula sol de osciladores
     document.getElementById('formula_sol_ED_1').innerHTML = `θ(t) = A₁Cos(ω₁t + Φ) + A₂Cos(ω₂t + Φ)`; //Barra
     document.getElementById('formula_sol_ED_2').innerHTML = `X(t) = B₁Cos(ω₁t + Φ) + B₂Cos(ω₂t + Φ)`; //Esfera
+
+    //Evaluación sol de los osciladores
+    document.getElementById('formula_evaluada_sol_ED_1').innerHTML = `θ(t) = A₁Cos(ω₁t + Φ) + A₂Cos(ω₂t + Φ)`; //Barra
+    document.getElementById('formula_evaluada_sol_ED_2').innerHTML = `X(t) = B₁Cos(ω₁t + Φ) + B₂Cos(ω₂t + Φ)`; //Esfera
 }
