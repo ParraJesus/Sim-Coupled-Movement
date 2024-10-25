@@ -211,6 +211,8 @@ function calcularAmplitud(omega){
 
     console.log(`${A} ${B} ${A/B}`);
 
+    console.log('----------------------------');
+
     return amplitud;
 
 }
@@ -258,21 +260,25 @@ function inicializarEcuaciones(){
     
     //Fórmula de a
     document.getElementById('formula_coeficiente_a').innerHTML = `a = Lm`; //Fórmula 
-    document.getElementById('formula_evaluada_coeficiente_a').innerHTML = `a = `; //Valor
+    document.getElementById('formula_evaluada_coeficiente_a').innerHTML = `a = ${a}`; //Valor
 
     //Fórmula de b
     document.getElementById('formula_coeficiente_b').innerHTML = `b = (-I(k₁ + k₂) - m[k₀l²/4 + k₁l²/4])`; //Fórmula 
-    document.getElementById('formula_evaluada_coeficiente_b').innerHTML = `b = `; //Valor
+    document.getElementById('formula_evaluada_coeficiente_b').innerHTML = `b = ${b}`; //Valor
 
     //Fórmula de c
     document.getElementById('formula_coeficiente_c').innerHTML = `c = [k₀l²/4 + k₁l²/4](k₁ + k₂) - (k₁l/2)²`; //Fórmula 
-    document.getElementById('formula_evaluada_coeficiente_c').innerHTML = `c = `; //Valor
+    document.getElementById('formula_evaluada_coeficiente_c').innerHTML = `c = ${c}`; //Valor
 
     //Fórmula w1 y w2
-    document.getElementById('formula_evaluada_frecuencia_1').innerHTML = `${omega1}`; //Valor
-    document.getElementById('formula_evaluada_frecuencia_2').innerHTML = `${omega2}`; //Valor
+    document.getElementById('formula_evaluada_frecuencia_1').innerHTML = `ω₁ = ${omega1}`; //Valor
+    document.getElementById('formula_evaluada_frecuencia_2').innerHTML = `ω₂ = ${omega2}`; //Valor
 
     
-    document.getElementById('amplitud1').innerHTML = `${amplitud1}`; //Valor
-    document.getElementById('amplitud2').innerHTML = `${amplitud2}`; //Valor
+    document.getElementById('amplitud1').innerHTML = `A₁/B₁ = ${amplitud1}`; //Valor
+    document.getElementById('amplitud2').innerHTML = `A₂/B₂ = ${amplitud2}`; //Valor
+
+    //Fórmula de osciladores
+    document.getElementById('formula_sol_ED_1').innerHTML = `θ(t) = A₁Cos(ω₁t + Φ) + A₂Cos(ω₂t + Φ)`; //Barra
+    document.getElementById('formula_sol_ED_2').innerHTML = `X(t) = B₁Cos(ω₁t + Φ) + B₂Cos(ω₂t + Φ)`; //Esfera
 }
