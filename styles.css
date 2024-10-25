@@ -235,6 +235,11 @@ header, footer
     overflow-x: auto;
 }
 
+.center_text
+{
+    text-align: center;
+}
+
 @media (max-width: 768px) {
     .slider-group {
         grid-template-columns: 1fr;
