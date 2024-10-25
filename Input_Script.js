@@ -17,6 +17,7 @@ function initializeInput(inputId)
     });
 }
 
+generalModeButton.style.backgroundColor = "#686898";
 function vibrationMode_0()
 {
     currentMode = 0;
