@@ -17,6 +17,7 @@ let amplitud = 0;
 //Datos sim
 let t = 0;
 let dt = 0.2;
+modoVibracion = 0; //0 = general, 1 = primer modo vibración, 2 = segundo modo vibración
 
 //Colores
 let bgColor = "#F0F0F0", roofColor = "#686898", barColor = "#6EAA78", ejeColor = "#fff", resorte1Color = "#F00", resorte2Color = "#0F0",
@@ -25,6 +26,13 @@ resorte3Color = "#00F", esferaColor = "#dd671e";
 window.onload = function() {
     inicializarEcuaciones();
 }
+
+document.addEventListener('modeUpdated', function(e) {
+    const inputData = e.detail;
+    console.log('Modo vibración:', inputData);
+    modoVibracion = parseInt(inputData.mode);
+    alert(modoVibracion);
+});
 
 document.addEventListener('inputDataUpdated', function(e) {
     const inputData = e.detail;
@@ -37,10 +45,8 @@ document.addEventListener('inputDataUpdated', function(e) {
     k3 = parseFloat(inputData.k3);
     barra_pos_inicial = parseFloat(inputData.barra_pos_inicial);
     esfera_pos_inicial_pos_inicial = parseFloat(inputData.esfera_pos_inicial);
-
-    console.log(`${k1} ${k2} ${k3}`);
-
     I = (barra_m*(barra_l*barra_l))/12;
+
     inicializarEcuaciones();
 });
 
@@ -63,10 +69,19 @@ function windowResized() {
 
 function draw() {
     //Cálculos del movimiento
-    barraPosActual = Math.cos(t/20); //Ajusta la rotación de la barra
-    esferaPosActual = 10*Math.cos(t/4); //Ajusta posición de la esfera
-    //esferaPosActual =0;
-    //barraPosActual=0;
+    if(modoVibracion == 1){
+        barraPosActual = Math.cos(t/4)/2;
+        esferaPosActual = -10*Math.sin(t/4)/2;
+    }
+    else if(modoVibracion == 2){
+        barraPosActual = Math.cos(t/4)/2;
+        esferaPosActual = 10*Math.sin(t/4)/2;
+    }
+    else{
+        barraPosActual = Math.cos(t/20); //Ajusta la rotación de la barra
+        esferaPosActual = 10*Math.cos(t/4); //Ajusta posición de la esfera
+    }
+
     //Ajustes generales del canvas
     let drawBarLenght = barra_l*20;
     if(drawBarLenght > 200) drawBarLenght = 200; 
