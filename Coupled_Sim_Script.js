@@ -5,6 +5,8 @@ let esfera_m = 0;
 let k1 = 2;
 let k2 = 1;
 let k3 = 4;
+let barra_pos_inicial = 0;
+let esfera_pos_inicial = 0;
 
 let I = 0;
 
@@ -33,6 +35,9 @@ document.addEventListener('inputDataUpdated', function(e) {
     k1 = parseFloat(inputData.k1);
     k2 = parseFloat(inputData.k2);
     k3 = parseFloat(inputData.k3);
+    barra_pos_inicial = parseFloat(inputData.barra_pos_inicial);
+    esfera_pos_inicial_pos_inicial = parseFloat(esfera_pos_inicial);
+
     console.log(`${k1} ${k2} ${k3}`);
 
     I = (barra_m*(barra_l*barra_l))/12;

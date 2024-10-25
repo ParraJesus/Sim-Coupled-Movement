@@ -20,7 +20,9 @@ function getInputData() {
         esfera_masa: document.getElementById("sphere_mass_input").value,
         k1: document.getElementById("k1_input").value,
         k2: document.getElementById("k2_input").value,
-        k3: document.getElementById("k3_input").value
+        k3: document.getElementById("k3_input").value,
+        barra_pos_inicial: document.getElementById("bar_initial_pos_input").value,
+        esfera_pos_inicial: document.getElementById("sphere_initial_pos_input").value
     };
     //  pasar esta información al otro script
     const onInputDataUpdated = new CustomEvent('inputDataUpdated', {
@@ -53,6 +55,8 @@ initializeInput("sphere_mass_input");
 initializeInput("k1_input");
 initializeInput("k2_input");
 initializeInput("k3_input");
+initializeInput("bar_initial_pos_input");
+initializeInput("sphere_initial_pos_input");
 
 
 updateDataButton.addEventListener("click", getInputData);
