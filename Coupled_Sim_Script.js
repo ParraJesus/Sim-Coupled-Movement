@@ -2,9 +2,9 @@
 let barra_l = 10;
 let barra_m = 0;
 let esfera_m = 0;
-let k1 = 0;
-let k2 = 0;
-let k3 = 0;
+let k1 = 2;
+let k2 = 1;
+let k3 = 4;
 
 let I = 0;
 
@@ -33,7 +33,10 @@ document.addEventListener('inputDataUpdated', function(e) {
     k1 = parseFloat(inputData.k1);
     k2 = parseFloat(inputData.k2);
     k3 = parseFloat(inputData.k3);
+    console.log(`${k1} ${k2} ${k3}`);
+
     I = (barra_m*(barra_l*barra_l))/12;
+    inicializarEcuaciones();
 });
 
 document.addEventListener('startAnimation', function(e) {
@@ -196,9 +199,17 @@ function calcularFrecuenciasNaturales() {
 
 function calcularAmplitud(omega){
 
+    
     let I = (barra_m*(barra_l*barra_l))/12;
+
     amplitud = (k2*barra_l/2)/[-I*omega*omega + k1*(barra_l*barra_l/4) + k2*(barra_l*barra_l/4)]; // A/B
+
+    A = (k2*barra_l/2);
+    B = [-I*omega*omega + k1*(barra_l*barra_l/4) + k2*(barra_l*barra_l/4)]
+
     console.log('A/B = ' + amplitud);
+
+    console.log(`${A} ${B} ${A/B}`);
 
     return amplitud;
 
@@ -212,6 +223,8 @@ function primerModoVibracion(){
 
 function inicializarEcuaciones(){
     //Variables
+    
+
     let I = (barra_m*(barra_l*barra_l))/12;
 
     let a = I*esfera_m;  // a = Im
@@ -226,6 +239,8 @@ function inicializarEcuaciones(){
 
     let amplitud1 = calcularAmplitud(omega1);
     let amplitud2 = calcularAmplitud(omega2);
+    
+    console.log('W = ' + omega1);
     
     //Lagrangriano
     document.getElementById('formula_lagrangiano').innerHTML = `L = (1/2)I(θ')² + (1/2)m(x')² - [(1/2)k₀(l/2θ)² + (1/2)k₁(l/2θ + x)² + (1/2)k₂x² + mgx]`; //Fórmula
