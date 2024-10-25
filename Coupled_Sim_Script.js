@@ -1,18 +1,48 @@
+//Datos de las entradas
+let barra_l = 10;
+let barra_m = 0;
+let esfera_m = 0;
+let k1 = 0;
+let k2 = 0;
+let k3 = 0;
+
+//Datos Calculados
 let barraPosActual = 0, barraVelActual = 0, barraAceleActual = 0;
 let esferaPosActual = 0, esferaVelActual = 0, esferaAceleActual = 0;
-let l = 10;
+
+//Datos sim
 let t = 0;
 let dt = 0.2;
 
 //Colores
-let bgColor = "#F0F0F0", roofColor = "#686898", barColor = "#6EAA78", ejeColor = "#fff", resorteColor = "#666";
+let bgColor = "#F0F0F0", roofColor = "#686898", barColor = "#6EAA78", ejeColor = "#fff", resorte1Color = "#F00", resorte2Color = "#0F0",
+resorte3Color = "#00F", esferaColor = "#dd671e";
+
+window.onload = function() {
+    inicializarEcuaciones();
+}
+
+document.addEventListener('inputDataUpdated', function(e) {
+    const inputData = e.detail;
+    console.log('Datos recibidos:', inputData);
+    barra_m = parseFloat(inputData.barra_masa);
+    barra_l = parseFloat(inputData.barra_longitud);
+    esfera_m = parseFloat(inputData.esfera_masa);
+    k1 = parseFloat(inputData.k1);
+    k2 = parseFloat(inputData.k2);
+    k3 = parseFloat(inputData.k3);
+});
+
+document.addEventListener('startAnimation', function(e) {
+    pauseAnimation();
+});
 
 function setup() {
     let canvasDiv = document.getElementById('sim_container');
     let canvas = createCanvas(canvasDiv.offsetWidth, canvasDiv.offsetHeight);
     canvas.parent('sim_container');
-    windowResized(); //Llamamos a esta función para asegurar que el canvas se ajuste correctamente
-    //noLoop();
+    windowResized();
+    noLoop();
 }
 
 function windowResized() {
@@ -23,12 +53,12 @@ function windowResized() {
 function draw() {
     //Cálculos del movimiento
     barraPosActual = Math.cos(t/20); //Ajusta la rotación de la barra
-    esferaPosActual = 10*Math.cos(t); //Ajusta posición de la esfera
+    esferaPosActual = 10*Math.cos(t/4); //Ajusta posición de la esfera
     //esferaPosActual =0;
     //barraPosActual=0;
-
     //Ajustes generales del canvas
-    let drawBarLenght = l*20;
+    let drawBarLenght = barra_l*20;
+    if(drawBarLenght > 200) drawBarLenght = 200; 
     background(bgColor);
     noStroke();
     strokeWeight(1);
@@ -46,7 +76,7 @@ function draw() {
     let extremoIzqBarra_y = drawBarLenght/2 * Math.sin(barraPosActual); //Coordenada en y del extremo izquierdo de la barra
 
     //Dibujar resorte 1
-    drawSpring(-extremoIzqBarra_x/2, -195, -(extremoIzqBarra_x/2), -extremoIzqBarra_y-5, 50); //x1, y1; x2, y2, numCoils
+    drawSpring(-extremoIzqBarra_x/2, -195, -(extremoIzqBarra_x/2), -extremoIzqBarra_y-5, 50, resorte1Color); //x1, y1; x2, y2, numCoils
 
     // Rota el sistema de coordenadas
     rotate(barraPosActual);
@@ -87,20 +117,20 @@ function draw() {
     //circle(-extremoDerBarra_x/2, extremoInferiorEsfera_y, 5); //Punto ref
 
     //Dibujar resorte 2
-    drawSpring(-extremoDerBarra_x/2, extremoDerBarra_y, -extremoDerBarra_x/2, extremoSuperiorEsfera_y, 25);//x1, y1; x2, y2, numCoils
+    drawSpring(-extremoDerBarra_x/2, extremoDerBarra_y, -extremoDerBarra_x/2, extremoSuperiorEsfera_y, 25, resorte2Color);//x1, y1; x2, y2, numCoils
 
     //Dibujar resorte 3
-    drawSpring(-extremoDerBarra_x/2, extremoInferiorEsfera_y, -extremoDerBarra_x/2, 196, 25);//x1, y1; x2, y2, numCoils
+    drawSpring(-extremoDerBarra_x/2, extremoInferiorEsfera_y, -extremoDerBarra_x/2, 196, 25, resorte3Color);//x1, y1; x2, y2, numCoils
 
     //Dibujar la esfera
-    fill(roofColor);
+    fill(esferaColor);
     circle(-extremoDerBarra_x/2, esferaPosActual+defaultPosEsfera, 20);
 
     // Incrementa el tiempo
     t += dt;
 }
-// Función para dibujar el resorte
-function drawSpring(x1, y1, x2, y2, numCoilss) 
+
+function drawSpring(x1, y1, x2, y2, numCoilss, color) 
 {
     //line(x1, y1, x2, y2);
     let numCoils = numCoilss;
@@ -108,7 +138,7 @@ function drawSpring(x1, y1, x2, y2, numCoilss)
     let coilSpacing = springLength / numCoils;
     
     strokeWeight(2);
-    stroke(resorteColor);
+    stroke(color);
     strokeJoin(ROUND);
     
     noFill();
@@ -128,4 +158,33 @@ function drawSpring(x1, y1, x2, y2, numCoilss)
 
     strokeWeight(1);
     noStroke();
+}
+
+function pauseAnimation()
+{
+    if(isLooping())
+    {
+        noLoop();
+    }
+    else
+    {
+        loop();
+    }
+}
+
+//document.getElementById('').innerHTML = ``; //Fórmula
+//document.getElementById('').innerHTML = ``; //Valor
+
+function inicializarEcuaciones(){
+    //Lagrangriano
+    document.getElementById('formula_lagrangiano').innerHTML = `L = (1/2)I(θ')² + (1/2)m(x')² - [(1/2)k₀(l/2θ)² + (1/2)k₁(l/2θ + x)² + (1/2)k₂x² + mgx]`; //Fórmula
+    document.getElementById('formula_evaluada_lagrangiano').innerHTML = ``; //Valor
+
+    //Ecuaciones Diferenciales
+    document.getElementById('formula_ED_1').innerHTML = ``; //Fórmula
+    document.getElementById('formula_ED_2').innerHTML = ``; //Fórmula
+
+    document.getElementById('formula_evaluada_ED_1').innerHTML = ``; //valor
+    document.getElementById('formula_evaluada_ED_1').innerHTML = ``; //Valor
+    
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página Principal</title>
+    <title>Movimiento Acoplado</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -14,19 +14,128 @@
     </header>
 
     <main class="container">
+        <section class="controls-section shadow-transition" id="data-container">
+            <h2>Datos de Movimiento Acoplado</h2>
+            <div class="slider-group">
+                <div class="slider-container">
+                    <label for="bar_mass_input">Masa de la barra (kg):</label>
+                    <input type="number" step="0.001" min="0" value="0" id="bar_mass_input">
+                </div>
+                <div class="slider-container">
+                    <label for="bar_lenght_input">Longitud de la barra (m):</label>
+                    <input type="number" step="0.001" min="1" value="1" id="bar_lenght_input">
+                </div>
+                <div class="slider-container">
+                    <label for="sphere_mass_input">Masa de la esfera (kg):</label>
+                    <input type="number" step="0.001" min="0" value="0" id="sphere_mass_input">
+                </div>
+                <div class="slider-container">
+                    <label for="k1_input">Constante del resorte 1 (Rojo) (N/m):</label>
+                    <input type="number" step="0.001" min="0" value="0" id="k1_input">
+                </div>
+                <div class="slider-container">
+                    <label for="k2_input">Constante del resorte 2 (Azul) (N/m):</label>
+                    <input type="number" step="0.001" min="0" value="0" id="k2_input">
+                </div>
+                <div class="slider-container">
+                    <label for="k3_input">Constante del resorte 3 (Verde) (N/m):</label>
+                    <input type="number" step="0.001" min="0" value="0" id="k3_input">
+                </div>
+            </div>
+            <div class="button-container">
+                <button id="updateDataButton">Actualizar Datos</button>
+                <button id="startAnimButton">Iniciar Animación</button>
+            </div>
+        </section>
         <section class="simulation-section shadow-transition">
             <h2>Simulación</h2>
             <div id="sim_container" class="sim__container"></div>
         </section>
+        <section class="equations-section shadow-transition">
+            <h2>Ecuaciones del Sistema</h2>
+            <div class="equations__grid">
+                <div class="equation">
+                    <span class="equation__label">Lagrangiano:</span>
+
+                    <span class="equation__value"> Fórmula del langrangiano: </span>
+                    <span id="formula_lagrangiano" class="equation__value"></span>
+
+                    <span class="equation__value"> Fórmula evaluada del langrangiano: </span>
+                    <span id="formula_evaluada_lagrangiano" class="equation__value"></span>
+                </div>
+                <div class="equation">
+                    <span class="equation__label">Ecuaciones Diferenciales</span>
+
+                    <span class="equation__value">Ecuación diferencial de la barra: </span>
+                    <span id="formula_ED_1" class="equation__value"></span>
+                    
+                    <span class="equation__value">Ecuación diferencial de la esfera: </span>
+                    <span id="formula_ED_2" class="equation__value"></span>
+
+                    <span class="equation__value">Ecuación diferencial evaluada de la barra: </span>
+                    <span id="formula_evaluada_ED_1" class="equation__value"></span>
+
+                    <span class="equation__value">Ecuación diferencial evaluada de la esfera: </span>
+                    <span id="formula_evaluada_ED_2" class="equation__value"></span>
+                </div>
+                <div class="equation">
+                    <span class="equation__label">Soluciones de la ED</span>
+
+                    <span class="equation__value">Solución de la ED de la barra: </span>
+                    <span id="formula_sol_ED_1" class="equation__value"></span>
+
+                    <span class="equation__value">Solución de la ED de la esfera: </span>
+                    <span id="formula_sol_ED_2" class="equation__value"></span>
+
+                    <span class="equation__value">Solución de la ED evaluada de la barra: </span>
+                    <span id="formula_evaluada_sol_ED_1" class="equation__value"></span>
+
+                    <span class="equation__value">Solución de la ED evaluada de la esfera: </span>
+                    <span id="formula_evaluada_sol_ED_2" class="equation__value"></span>
+                </div>
+                <div class="equation">
+                    <span class="equation__label">Frecuencias naturales del Movimiento</span>
+
+                    <span class="equation__value">Ecuación característica: </span>
+                    <span id="formula_general_frecuencia_1" class="equation__value"></span>
+
+                    <span class="equation__value">Fórmula de a: </span>
+                    <span id="formula_coeficiente_a" class="equation__value"></span>
+
+                    <span class="equation__value">Fórmula de b: </span>
+                    <span id="formula_coeficiente_b" class="equation__value"></span>
+
+                    <span class="equation__value">Fórmula de c: </span>
+                    <span id="formula_coeficiente_c" class="equation__value"></span>
+
+                    <span class="equation__value">Fórmula evaluada de a: </span>
+                    <span id="formula_evaluada_coeficiente_a" class="equation__value"></span>
+
+                    <span class="equation__value">Fórmula evaluada de b: </span>
+                    <span id="formula_evaluada_coeficiente_b" class="equation__value"></span>
+
+                    <span class="equation__value">Fórmula evaluada de c: </span>
+                    <span id="formula_evaluada_coeficiente_c" class="equation__value"></span>
+
+                    <span class="equation__value">Fórmula de las frecuencias naturales: </span>
+                    <span id="formula_general_frecuencia_2" class="equation__value"></span>
+                    
+                    <span class="equation__value">Fórmula evaluada de las frecuencias naturales: </span>
+                    <span id="formula_evaluada_frecuencia_1" class="equation__value"></span>
+                    <span id="formula_evaluada_frecuencia_2" class="equation__value"></span>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer>
-        <p>Proyecto realizado por Alejandro Cárdenas, Jesús Parra, Elkin Morillo, Anderson Vinasco y Paulo Chamorro</p>
+        <p>Proyecto realizado por Jesús Parra, Elkin Morillo, Alejandro Cárdenas</p>
     </footer>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="Coupled_Sim_Script.js"></script>
-    <script src="Coupled_Slider_Controller.js"></script>
+    <script src="Input_Script.js"></script>
 </body>
 </html>
