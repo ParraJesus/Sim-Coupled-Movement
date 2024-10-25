@@ -172,6 +172,25 @@ function pauseAnimation()
     }
 }
 
+function calcularFrecuenciasNaturales() {
+    // Calcular coeficientes según las definiciones dadas
+    let I = (barra_m*(barra_l*barra_l))/12;
+
+    let a = I*esfera_m;  // a = Im
+    
+    let b = (-I*(k2 + k3) - m*(k1*barra_l*barra_l/4 + k2*barra_l*barra_l/4));  // b = (-I(k1 + k2) - m[kl²/4 + k1l²/4])
+    
+    let c = ((k1*barra_l*barra_l/4 + k2*barra_l*barra_l/4)*(k2 + k3) - Math.pow(k2*barra_l/2, 2));  // c = [kl²/4 + k1l²/4](k1 + k2) - (k1l/2)²
+    
+    // Calcular las frecuencias usando la fórmula cuadrática
+    let omega1 = Math.sqrt((-b + Math.sqrt(b*b - 4*a*c))/(2*a));
+    let omega2 = Math.sqrt((-b - Math.sqrt(b*b - 4*a*c))/(2*a));
+    
+    console.log('Freqs:', omega1, omega2);
+    return [omega1, omega2];
+    
+}
+
 //document.getElementById('').innerHTML = ``; //Fórmula
 //document.getElementById('').innerHTML = ``; //Valor
 
