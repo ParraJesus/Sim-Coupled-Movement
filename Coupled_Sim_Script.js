@@ -195,7 +195,7 @@ function calcularFrecuenciasNaturales() {
 
 function inicializarEcuaciones(){
     //Variables
-    let I = 1/12*m*l**2;
+    let I = (barra_m*(barra_l*barra_l))/12;
 
     let a = I*m;
     let b = (-I*(k1 + k2) - m*(k0*l*l/4 + k1*l*l/4));
