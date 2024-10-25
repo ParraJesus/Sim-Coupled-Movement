@@ -36,7 +36,7 @@ document.addEventListener('inputDataUpdated', function(e) {
     k2 = parseFloat(inputData.k2);
     k3 = parseFloat(inputData.k3);
     barra_pos_inicial = parseFloat(inputData.barra_pos_inicial);
-    esfera_pos_inicial_pos_inicial = parseFloat(esfera_pos_inicial);
+    esfera_pos_inicial_pos_inicial = parseFloat(inputData.esfera_pos_inicial);
 
     console.log(`${k1} ${k2} ${k3}`);
 
