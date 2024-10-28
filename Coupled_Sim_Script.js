@@ -16,7 +16,7 @@ let esferaPosActual = 0, esferaVelActual = 0, esferaAceleActual = 0;
 let amplitud = 0;
 //Datos sim
 let t = 0;
-let dt = 0.2;
+let dt = 0.02;
 modoVibracion = 0; //0 = general, 1 = primer modo vibración, 2 = segundo modo vibración
 
 //Colores
@@ -45,7 +45,7 @@ document.addEventListener('inputDataUpdated', function (e) {
     barra_pos_inicial = parseFloat(inputData.barra_pos_inicial);
     esfera_pos_inicial = parseFloat(inputData.esfera_pos_inicial);
     I = (barra_m * (barra_l * barra_l)) / 12;
-
+    t = 0;
     inicializarEcuaciones();
 });
 
@@ -161,16 +161,16 @@ function draw() {
 function draw() {
     //Cálculos del movimiento
     if (modoVibracion == 1) {
-        barraPosActual = Math.cos(t / 4) / 2;
-        esferaPosActual = -10 * Math.sin(t / 4) / 2;
+        barraPosActual = primerModoVibracion(t).barra;
+        esferaPosActual = primerModoVibracion(t).esfera;
     }
     else if (modoVibracion == 2) {
-        barraPosActual = Math.cos(t / 4) / 2;
-        esferaPosActual = 10 * Math.sin(t / 4) / 2;
+        barraPosActual = segundoModoVibracion(t).barra;
+        esferaPosActual = segundoModoVibracion(t).esfera;
     }
     else {
-        barraPosActual = Math.cos(t / 20); //Ajusta la rotación de la barra
-        esferaPosActual = 10 * Math.cos(t / 4); //Ajusta posición de la esfera
+        barraPosActual = modoGeneralVibracion(t).barra;
+        esferaPosActual = modoGeneralVibracion(t).esfera;
     }
 
     //Ajustes generales del canvas
@@ -194,8 +194,7 @@ function draw() {
 
     //Dibujar resorte 1
     drawSpring(-drawBarLenght / 2, -195, -(extremoIzqBarra_x / 2), -extremoIzqBarra_y - 5, 50, resorte1Color); //x1, y1; x2, y2, numCoils
-    //fill("#48e")
-    //circle(-drawBarLenght/2, -195, 10);
+
     // Rota el sistema de coordenadas
     rotate(barraPosActual);
 
@@ -213,33 +212,17 @@ function draw() {
     //Obtener coordenadas del extremo derecho de la barra
     let extremoDerBarra_x = -drawBarLenght * Math.cos(barraPosActual); //Coordenada en x del extremo izquierdo de la barra
     let extremoDerBarra_y = drawBarLenght / 2 * Math.sin(barraPosActual); //Coordenada en y del extremo izquierdo de la barra
-    //fill("#000");
-    //circle(-extremoDerBarra_x/2, extremoDerBarra_y, 5); //Punto ref
-
-    //Obtener coordenadas de la distancia entre el extremo derecho de la barra y el suelo
-    //circle(-extremoDerBarra_x/2, 196, 5); //Punto ref
 
     //Obtener un punto medio entre la barra y el suelo
     let defaultPosEsfera_x = -((drawBarLenght / 2) + (-extremoDerBarra_x / 2)) / 2;
     let defaultPosEsfera_y = (extremoDerBarra_y + 196) / 2;
     fill("#f00");
-    //circle(((drawBarLenght/2)+(-extremoDerBarra_x/2))/2, defaultPosEsfera_y, 10); //Punto ref
-    //circle(0, 0, 20);
-    //fill("#ff0");
-    //circle((drawBarLenght/2), 0, 4);
-    //circle((-extremoDerBarra_x/2), 0, 4);
-
-    //Translada el sistema de coordenadas al medio exacto entre la barra y el piso
-    //translate(-extremoDerBarra_x/2, defaultPosEsfera);
 
     //Obtener coordenadas de los extremos superior e inferior de la esfera
     let extremoSuperiorEsfera_y = defaultPosEsfera_y + esferaPosActual - 10;
     let extremoInferiorEsfera_y = defaultPosEsfera_y + esferaPosActual + 10;
     let extremoSuperiorEsfera_x = -defaultPosEsfera_x;
     let extremoInferiorEsfera_x = -defaultPosEsfera_x;
-    //fill("#ff0");
-    //circle(-extremoDerBarra_x/2, extremoSuperiorEsfera_y, 5); //Punto ref
-    //circle(-extremoDerBarra_x/2, extremoInferiorEsfera_y, 5); //Punto ref
 
     //Dibujar resorte 2
     drawSpring(-extremoDerBarra_x / 2, extremoDerBarra_y, extremoSuperiorEsfera_x, extremoSuperiorEsfera_y, 25, resorte2Color);//x1, y1; x2, y2, numCoils
@@ -312,31 +295,18 @@ function calcularFrecuenciasNaturales() {
 
 }
 
-function calcularAmplitud(omega) {
-
-
+function calcularRelacionesAmplitudes(omega) {
     let I = (barra_m * (barra_l * barra_l)) / 12;
 
     amplitud = (k2 * barra_l / 2) / [-I * omega * omega + k1 * (barra_l * barra_l / 4) + k2 * (barra_l * barra_l / 4)]; // A/B
 
     A = (k2 * barra_l / 2);
-    B = [-I * omega * omega + k1 * (barra_l * barra_l / 4) + k2 * (barra_l * barra_l / 4)]
-
-    //console.log('A/B = ' + amplitud);
-
-    //console.log(`${A} ${B} ${A / B}`);
-
-    console.log('----------------------------');
+    B = [-I * omega * omega + k1 * (barra_l * barra_l / 4) + k2 * (barra_l * barra_l / 4)];
 
     return -amplitud;
-
 }
 
-function calcularAmplitudes() {
-
-}
-
-function calcularAmplitudes_gpt(posInicial_barra, posInicial_esfera, relacionA1B1, relacionA2B2 ) {
+function calcularCoeficientesAmplitud(posInicial_barra, posInicial_esfera, relacionA1B1, relacionA2B2 ) {
     if (relacionA1B1 === relacionA2B2) {
         throw new Error("No es posible calcular las amplitudes cuando ambas relaciones son iguales");
     }
@@ -350,35 +320,67 @@ function calcularAmplitudes_gpt(posInicial_barra, posInicial_esfera, relacionA1B
     return {A1, A2, B1, B2};
 }
 
-function primerModoVibracion() {
+function primerModoVibracion(time) {
+    //Variables
+    let I = (barra_m * (barra_l * barra_l)) / 12;
+    let a = I * esfera_m;  // a = Im
+    let b = (-I * (k2 + k3) - esfera_m * (k1 * barra_l * barra_l / 4 + k2 * barra_l * barra_l / 4));  
+    let c = ((k1 * barra_l * barra_l / 4 + k2 * barra_l * barra_l / 4) * (k2 + k3) - Math.pow(k2 * barra_l / 2, 2));  
+    // Calcular las frecuencias usando la fórmula cuadrática
+    let omega1 = Math.sqrt((-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+    let omega2 = Math.sqrt((-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+    //Calcular las relaciones entre amplitudes
+    let amplitud1 = calcularRelacionesAmplitudes(omega1);
+    let amplitud2 = calcularRelacionesAmplitudes(omega2);
 
+    let coeficientesAmplitudes = calcularCoeficientesAmplitud(barra_pos_inicial, esfera_pos_inicial, amplitud1, amplitud2);
+
+    pos_barra = coeficientesAmplitudes.A1 * Math.cos(omega1 * time);
+    pos_esfera = coeficientesAmplitudes.B1 * Math.cos(omega1 * time);
+
+    return {barra: pos_barra, esfera: pos_esfera};
 }
 
-//document.getElementById('').innerHTML = ``; //Fórmula document.getElementById('').innerHTML = ``; //Valor
+function segundoModoVibracion(time) {
+    //Variables
+    let I = (barra_m * (barra_l * barra_l)) / 12;
+    let a = I * esfera_m;  // a = Im
+    let b = (-I * (k2 + k3) - esfera_m * (k1 * barra_l * barra_l / 4 + k2 * barra_l * barra_l / 4));  
+    let c = ((k1 * barra_l * barra_l / 4 + k2 * barra_l * barra_l / 4) * (k2 + k3) - Math.pow(k2 * barra_l / 2, 2));  
+    // Calcular las frecuencias usando la fórmula cuadrática
+    let omega1 = Math.sqrt((-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+    let omega2 = Math.sqrt((-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+    //Calcular las relaciones entre amplitudes
+    let amplitud1 = calcularRelacionesAmplitudes(omega1);
+    let amplitud2 = calcularRelacionesAmplitudes(omega2);
 
-function calcularAmplitudes(Theta0, X0, relacionA1B1, relacionA2B2) {
+    let coeficientesAmplitudes = calcularCoeficientesAmplitud(barra_pos_inicial, esfera_pos_inicial, amplitud1, amplitud2);
 
-    // Resolver B1 y B2 usando las ecuaciones 1 y 2
-    let B1 = (Theta0 - (relacionA2B2 * X0)) / (1 + relacionA2B2); 
-    let B2 = X0 - B1; // De la segunda ecuación
+    pos_barra = coeficientesAmplitudes.A2 * Math.cos(omega2 * time);
+    pos_esfera = coeficientesAmplitudes.B2 * Math.cos(omega2 * time);
 
-    // Ahora calculamos A1 y A2
-    let A1 = B1 / relacionA1B1;
-    let A2 = B2 / relacionA2B2;
+    return {barra: pos_barra, esfera: pos_esfera};
+}
 
-    console.log('----------------------------');
-    console.log(`${Theta0}, ${X0}, ${relacionA1B1}, ${relacionA2B2}`);
-    console.log(`A1 = ${A1.toFixed(3)}, B1 = ${B1.toFixed(3)}`);
-    console.log(`A2 = ${A2.toFixed(3)}, B2 = ${B2.toFixed(3)}`);
-    console.log('----------------------------');
+function modoGeneralVibracion(time) {
+    //Variables
+    let I = (barra_m * (barra_l * barra_l)) / 12;
+    let a = I * esfera_m;  // a = Im
+    let b = (-I * (k2 + k3) - esfera_m * (k1 * barra_l * barra_l / 4 + k2 * barra_l * barra_l / 4));  
+    let c = ((k1 * barra_l * barra_l / 4 + k2 * barra_l * barra_l / 4) * (k2 + k3) - Math.pow(k2 * barra_l / 2, 2));  
+    // Calcular las frecuencias usando la fórmula cuadrática
+    let omega1 = Math.sqrt((-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+    let omega2 = Math.sqrt((-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+    //Calcular las relaciones entre amplitudes
+    let amplitud1 = calcularRelacionesAmplitudes(omega1);
+    let amplitud2 = calcularRelacionesAmplitudes(omega2);
 
-    return { B1, A1, B2, A2 };
+    let coeficientesAmplitudes = calcularCoeficientesAmplitud(barra_pos_inicial, esfera_pos_inicial, amplitud1, amplitud2);
 
-    //CALCULAR A2
-    //A1 + A2 = θ
-    //B1 + B2 = X
+    pos_barra = coeficientesAmplitudes.A1 * Math.cos(omega1 * time) + coeficientesAmplitudes.A2 * Math.cos(omega2 * time);
+    pos_esfera = coeficientesAmplitudes.B1 * Math.cos(omega1 * time) + coeficientesAmplitudes.B2 * Math.cos(omega2 * time);
 
-    
+    return {barra: pos_barra, esfera: pos_esfera};
 }
 
 function inicializarEcuaciones() {
@@ -395,14 +397,10 @@ function inicializarEcuaciones() {
     let omega1 = Math.sqrt((-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a));
     let omega2 = Math.sqrt((-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a));
 
-    let amplitud1 = calcularAmplitud(omega1);
-    let amplitud2 = calcularAmplitud(omega2);
+    let amplitud1 = calcularRelacionesAmplitudes(omega1);
+    let amplitud2 = calcularRelacionesAmplitudes(omega2);
 
-    let amplitudes = calcularAmplitudes(barra_pos_inicial, esfera_pos_inicial, amplitud1, amplitud2);
-
-    let amplitues_gpt = calcularAmplitudes_gpt(barra_pos_inicial, esfera_pos_inicial, amplitud1, amplitud2);
-
-    console.log('W = ' + omega1);
+    let coeficientesAmplitudes = calcularCoeficientesAmplitud(barra_pos_inicial, esfera_pos_inicial, amplitud1, amplitud2);
 
     //Lagrangriano
     document.getElementById('formula_lagrangiano').innerHTML = `L = (1/2)I(θ')² + (1/2)m(x')² - [(1/2)k₀(l/2θ)² + (1/2)k₁(l/2θ + x)² + (1/2)k₂x² + mgx]`; //Fórmula
@@ -449,12 +447,12 @@ function inicializarEcuaciones() {
     X₂(t) = B₂Cos(ω₂t + Φ)`;
 
     //EVALUANDO LAS SOLUCIONES GENERALES CON A1, A2, B1, B2 CALCULADAS
-    document.getElementById('modo0').innerHTML = `θ₁(t) = (${amplitues_gpt.A1.toFixed(3)})Cos((${omega1.toFixed(3)})t) + (${amplitues_gpt.A2.toFixed(3)})Cos((${omega2.toFixed(3)})t) <br>
-    X₁(t) = (${amplitues_gpt.B1.toFixed(3)})Cos((${omega1.toFixed(3)})t) + (${amplitues_gpt.B2.toFixed(3)})Cos((${omega2.toFixed(3)})t)`;
+    document.getElementById('modo0').innerHTML = `θ₁(t) = (${coeficientesAmplitudes.A1.toFixed(3)})Cos((${omega1.toFixed(3)})t) + (${coeficientesAmplitudes.A2.toFixed(3)})Cos((${omega2.toFixed(3)})t) <br>
+    X₁(t) = (${coeficientesAmplitudes.B1.toFixed(3)})Cos((${omega1.toFixed(3)})t) + (${coeficientesAmplitudes.B2.toFixed(3)})Cos((${omega2.toFixed(3)})t)`;
 
-    document.getElementById('modo1').innerHTML = `θ₁(t) = (${amplitues_gpt.A1.toFixed(3)})Cos((${omega1.toFixed(3)})t) <br>
-    X₁(t) = (${amplitues_gpt.B1.toFixed(3)})Cos((${omega1.toFixed(3)})t)`;
+    document.getElementById('modo1').innerHTML = `θ₁(t) = (${coeficientesAmplitudes.A1.toFixed(3)})Cos((${omega1.toFixed(3)})t) <br>
+    X₁(t) = (${coeficientesAmplitudes.B1.toFixed(3)})Cos((${omega1.toFixed(3)})t)`;
 
-    document.getElementById('modo2').innerHTML = `θ₂(t) = (${amplitues_gpt.A2.toFixed(3)})Cos((${omega2.toFixed(3)})t) <br>
-    X₂(t) = (${amplitues_gpt.B2.toFixed(3)})Cos((${omega2.toFixed(3)})t)`;
+    document.getElementById('modo2').innerHTML = `θ₂(t) = (${coeficientesAmplitudes.A2.toFixed(3)})Cos((${omega2.toFixed(3)})t) <br>
+    X₂(t) = (${coeficientesAmplitudes.B2.toFixed(3)})Cos((${omega2.toFixed(3)})t)`;
 }
