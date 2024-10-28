@@ -336,6 +336,20 @@ function calcularAmplitudes() {
 
 }
 
+function calcularAmplitudes_gpt(posInicial_barra, posInicial_esfera, relacionA1B1, relacionA2B2 ) {
+    if (relacionA1B1 === relacionA2B2) {
+        throw new Error("No es posible calcular las amplitudes cuando ambas relaciones son iguales");
+    }
+
+    let B1 = (posInicial_barra - relacionA2B2 * posInicial_esfera) / (relacionA1B1 - relacionA2B2);
+    let A1 = relacionA1B1 * B1;
+
+    let B2 = posInicial_esfera - B1;
+    let A2 = relacionA2B2 * B2;
+
+    return {A1, A2, B1, B2};
+}
+
 function primerModoVibracion() {
 
 }
@@ -386,6 +400,8 @@ function inicializarEcuaciones() {
 
     let amplitudes = calcularAmplitudes(barra_pos_inicial, esfera_pos_inicial, amplitud1, amplitud2);
 
+    let amplitues_gpt = calcularAmplitudes_gpt(barra_pos_inicial, esfera_pos_inicial, amplitud1, amplitud2);
+
     console.log('W = ' + omega1);
 
     //Lagrangriano
@@ -427,15 +443,18 @@ function inicializarEcuaciones() {
     document.getElementById('formula_sol_ED_2').innerHTML = `X(t) = B₁Cos(ω₁t + Φ) + B₂Cos(ω₂t + Φ)`; //Esfera
 
     //MODOS DE VIBRACION
-    document.getElementById('primer_modo').innerHTML = `θ₁(t) = ${amplitud1.toFixed(3)}B₁Cos(ω₁t) <br>
+    document.getElementById('primer_modo').innerHTML = `θ₁(t) = (A₁/B₁)B₁Cos(ω₁t) <br>
     X₁(t) = B₁Cos(ω₁t + Φ)`;
-    document.getElementById('segundo_modo').innerHTML = `θ₂(t) = ${amplitud2.toFixed(3)}B₂Cos(ω₂t) <br>
+    document.getElementById('segundo_modo').innerHTML = `θ₂(t) = (A₂/B₂)B₂Cos(ω₂t) <br>
     X₂(t) = B₂Cos(ω₂t + Φ)`;
 
-    //EVALUANDO LAS AMPLITUDES
-    document.getElementById('modo1').innerHTML = `θ₁(t) = ${amplitudes.A1.toFixed(3)}Cos(ω₁t) <br>
-    X₁(t) = ${amplitudes.B1.toFixed(3)}Cos(ω₁t)`;
+    //EVALUANDO LAS SOLUCIONES GENERALES CON A1, A2, B1, B2 CALCULADAS
+    document.getElementById('modo0').innerHTML = `θ₁(t) = (${amplitues_gpt.A1.toFixed(3)})Cos((${omega1.toFixed(3)})t) + (${amplitues_gpt.A2.toFixed(3)})Cos((${omega2.toFixed(3)})t) <br>
+    X₁(t) = (${amplitues_gpt.B1.toFixed(3)})Cos((${omega1.toFixed(3)})t) + (${amplitues_gpt.B2.toFixed(3)})Cos((${omega2.toFixed(3)})t)`;
 
-    document.getElementById('modo2').innerHTML = `θ₂(t) = ${amplitudes.A2.toFixed(3)}Cos(ω₂t) <br>
-    X₂(t) = ${amplitudes.B2.toFixed(3)}Cos(ω₂t)`;
+    document.getElementById('modo1').innerHTML = `θ₁(t) = (${amplitues_gpt.A1.toFixed(3)})Cos((${omega1.toFixed(3)})t) <br>
+    X₁(t) = (${amplitues_gpt.B1.toFixed(3)})Cos((${omega1.toFixed(3)})t)`;
+
+    document.getElementById('modo2').innerHTML = `θ₂(t) = (${amplitues_gpt.A2.toFixed(3)})Cos((${omega2.toFixed(3)})t) <br>
+    X₂(t) = (${amplitues_gpt.B2.toFixed(3)})Cos((${omega2.toFixed(3)})t)`;
 }
