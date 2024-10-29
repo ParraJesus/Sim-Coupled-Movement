@@ -17,7 +17,9 @@ let amplitud = 0;
 //Datos sim
 let t = 0;
 let dt = 0.02;
-modoVibracion = 0; //0 = general, 1 = primer modo vibración, 2 = segundo modo vibración
+let modoVibracion = 0; //0 = general, 1 = primer modo vibración, 2 = segundo modo vibración
+let canvasWidth;
+let scaleFactor;
 
 //Colores
 let bgColor = "#F0F0F0", roofColor = "#686898", barColor = "#6EAA78", ejeColor = "#fff", resorte1Color = "#F00", resorte2Color = "#0F0",
@@ -59,12 +61,180 @@ function setup() {
     canvas.parent('sim_container');
     windowResized();
     noLoop();
+    canvasWidth = canvasDiv.offsetWidth;
+    
+    scaleFactor = canvasWidth / 800; 
 }
 
 function windowResized() {
     let canvasDiv = document.getElementById('sim_container');
     resizeCanvas(canvasDiv.offsetWidth, canvasDiv.offsetHeight);
+    canvasWidth = canvasDiv.offsetWidth;
+
+    scaleFactor = canvasWidth / 800; 
 }
+
+function draw() {
+    // Cálculos del movimiento
+    if (modoVibracion == 1) {
+        barraPosActual = primerModoVibracion(t).barra;
+        esferaPosActual = primerModoVibracion(t).esfera;
+    }
+    else if (modoVibracion == 2) {
+        barraPosActual = segundoModoVibracion(t).barra;
+        esferaPosActual = segundoModoVibracion(t).esfera;
+    }
+    else {
+        barraPosActual = modoGeneralVibracion(t).barra;
+        esferaPosActual = modoGeneralVibracion(t).esfera;
+    }
+
+    // Ajustes generales del canvas
+    let drawBarLenght = barra_l * 20 * scaleFactor; // Aplica el factor de escala
+    if (drawBarLenght > 200 * scaleFactor) drawBarLenght = 200 * scaleFactor;
+    background(bgColor);
+    noStroke();
+    strokeWeight(1 * scaleFactor);
+
+    // Dibuja el techo y piso
+    fill(roofColor);
+    rect(0, 0, canvasWidth, 8 * scaleFactor); //x, y, width, height
+    rect(0, 400 * scaleFactor, canvasWidth, 8 * scaleFactor);
+
+    // Traslada el sistema de coordenadas al origen de la barra
+    translate((200 * scaleFactor) + (drawBarLenght / 2) - (20 * scaleFactor), 200 * scaleFactor + 4 * scaleFactor);
+
+    // Obtener coordenadas del extremo derecho de la barra
+    let extremoIzqBarra_x = drawBarLenght * Math.cos(barraPosActual); // Coordenada en x del extremo izquierdo de la barra
+    let extremoIzqBarra_y = (drawBarLenght / 2) * Math.sin(barraPosActual); // Coordenada en y del extremo izquierdo de la barra
+
+    // Dibujar resorte 1
+    drawSpring(-drawBarLenght / 2, -195 * scaleFactor, -(extremoIzqBarra_x / 2), -extremoIzqBarra_y - 5 * scaleFactor, 50, resorte1Color);
+
+    // Rota el sistema de coordenadas
+    rotate(barraPosActual);
+
+    // Dibuja la barra
+    fill(barColor);
+    rect(-drawBarLenght / 2, -10 * scaleFactor, drawBarLenght, 20 * scaleFactor);
+
+    // Dibuja el eje de rotación
+    fill(ejeColor);
+    circle(0, 0, 3 * scaleFactor);
+
+    // Rota el sistema a la posición original
+    rotate(2 * Math.PI - barraPosActual);
+
+    // Obtener coordenadas del extremo derecho de la barra
+    let extremoDerBarra_x = -drawBarLenght * Math.cos(barraPosActual);
+    let extremoDerBarra_y = (drawBarLenght / 2) * Math.sin(barraPosActual);
+
+    // Obtener un punto medio entre la barra y el suelo
+    let defaultPosEsfera_x = -((drawBarLenght / 2) + (-extremoDerBarra_x / 2)) / 2;
+    let defaultPosEsfera_y = (extremoDerBarra_y + 196 * scaleFactor) / 2;
+    fill("#f00");
+
+    // Obtener coordenadas de los extremos superior e inferior de la esfera
+    let extremoSuperiorEsfera_y = defaultPosEsfera_y + esferaPosActual - 10 * scaleFactor;
+    let extremoInferiorEsfera_y = defaultPosEsfera_y + esferaPosActual + 10 * scaleFactor;
+    let extremoSuperiorEsfera_x = -defaultPosEsfera_x;
+    let extremoInferiorEsfera_x = -defaultPosEsfera_x;
+
+    // Dibujar resorte 2
+    drawSpring(-extremoDerBarra_x / 2, extremoDerBarra_y, extremoSuperiorEsfera_x, extremoSuperiorEsfera_y, 25, resorte2Color);
+
+    // Dibujar resorte 3
+    drawSpring(extremoSuperiorEsfera_x, extremoInferiorEsfera_y, drawBarLenght / 2, 196 * scaleFactor, 25, resorte3Color);
+
+    // Dibujar la esfera
+    fill(esferaColor);
+    circle(-defaultPosEsfera_x, esferaPosActual + defaultPosEsfera_y, 20 * scaleFactor);
+
+    // Incrementa el tiempo
+    t += dt;
+}
+
+/*
+function draw() {
+    //Cálculos del movimiento
+    if (modoVibracion == 1) {
+        barraPosActual = primerModoVibracion(t).barra;
+        esferaPosActual = primerModoVibracion(t).esfera;
+    }
+    else if (modoVibracion == 2) {
+        barraPosActual = segundoModoVibracion(t).barra;
+        esferaPosActual = segundoModoVibracion(t).esfera;
+    }
+    else {
+        barraPosActual = modoGeneralVibracion(t).barra;
+        esferaPosActual = modoGeneralVibracion(t).esfera;
+    }
+
+    //Ajustes generales del canvas
+    let drawBarLenght = barra_l * 20;
+    if (drawBarLenght > 200) drawBarLenght = 200;
+    background(bgColor);
+    noStroke();
+    strokeWeight(1);
+
+    // Dibuja el techo y piso
+    fill(roofColor);
+    rect(0, 0, canvasWidth, 8); //x, y, width, height
+    rect(0, 400, canvasWidth, 8);
+
+    // Traslada el sistema de coordenadas al origen de la barra
+    translate(200 + (drawBarLenght / 2) - 20, 200 + 4);
+
+    //Obtener coordenadas del extremo derecho de la barra
+    let extremoIzqBarra_x = drawBarLenght * Math.cos(barraPosActual); //Coordenada en x del extremo izquierdo de la barra
+    let extremoIzqBarra_y = drawBarLenght / 2 * Math.sin(barraPosActual); //Coordenada en y del extremo izquierdo de la barra
+
+    //Dibujar resorte 1
+    drawSpring(-drawBarLenght / 2, -195, -(extremoIzqBarra_x / 2), -extremoIzqBarra_y - 5, 50, resorte1Color); //x1, y1; x2, y2, numCoils
+
+    // Rota el sistema de coordenadas
+    rotate(barraPosActual);
+
+    // Dibuja la barra
+    fill(barColor);
+    rect((-drawBarLenght / 2), -10, drawBarLenght, 20);
+
+    // Dibuja el eje de rotación
+    fill(ejeColor);
+    circle(0, 0, 3);
+
+    //Rotar el sistema a la posición original
+    rotate(2 * Math.PI - barraPosActual);
+
+    //Obtener coordenadas del extremo derecho de la barra
+    let extremoDerBarra_x = -drawBarLenght * Math.cos(barraPosActual); //Coordenada en x del extremo izquierdo de la barra
+    let extremoDerBarra_y = drawBarLenght / 2 * Math.sin(barraPosActual); //Coordenada en y del extremo izquierdo de la barra
+
+    //Obtener un punto medio entre la barra y el suelo
+    let defaultPosEsfera_x = -((drawBarLenght / 2) + (-extremoDerBarra_x / 2)) / 2;
+    let defaultPosEsfera_y = (extremoDerBarra_y + 196) / 2;
+    fill("#f00");
+
+    //Obtener coordenadas de los extremos superior e inferior de la esfera
+    let extremoSuperiorEsfera_y = defaultPosEsfera_y + esferaPosActual - 10;
+    let extremoInferiorEsfera_y = defaultPosEsfera_y + esferaPosActual + 10;
+    let extremoSuperiorEsfera_x = -defaultPosEsfera_x;
+    let extremoInferiorEsfera_x = -defaultPosEsfera_x;
+
+    //Dibujar resorte 2
+    drawSpring(-extremoDerBarra_x / 2, extremoDerBarra_y, extremoSuperiorEsfera_x, extremoSuperiorEsfera_y, 25, resorte2Color);//x1, y1; x2, y2, numCoils
+
+    //Dibujar resorte 3
+    drawSpring(extremoSuperiorEsfera_x, extremoInferiorEsfera_y, drawBarLenght / 2, 196, 25, resorte3Color);//x1, y1; x2, y2, numCoils
+
+    //Dibujar la esfera
+    fill(esferaColor);
+    circle(-defaultPosEsfera_x, esferaPosActual + defaultPosEsfera_y, 20);
+
+    // Incrementa el tiempo
+    t += dt;
+}
+*/
 
 /*
 function draw() {
@@ -158,86 +328,6 @@ function draw() {
 
 */
 
-function draw() {
-    //Cálculos del movimiento
-    if (modoVibracion == 1) {
-        barraPosActual = primerModoVibracion(t).barra;
-        esferaPosActual = primerModoVibracion(t).esfera;
-    }
-    else if (modoVibracion == 2) {
-        barraPosActual = segundoModoVibracion(t).barra;
-        esferaPosActual = segundoModoVibracion(t).esfera;
-    }
-    else {
-        barraPosActual = modoGeneralVibracion(t).barra;
-        esferaPosActual = modoGeneralVibracion(t).esfera;
-    }
-
-    //Ajustes generales del canvas
-    let drawBarLenght = barra_l * 20;
-    if (drawBarLenght > 200) drawBarLenght = 200;
-    background(bgColor);
-    noStroke();
-    strokeWeight(1);
-
-    // Dibuja el techo y piso
-    fill(roofColor);
-    rect(20, 0, 600, 8); //x, y, width, height
-    rect(20, 400, 600, 8);
-
-    // Traslada el sistema de coordenadas al origen de la barra
-    translate(200 + (drawBarLenght / 2) - 20, 200 + 4);
-
-    //Obtener coordenadas del extremo derecho de la barra
-    let extremoIzqBarra_x = drawBarLenght * Math.cos(barraPosActual); //Coordenada en x del extremo izquierdo de la barra
-    let extremoIzqBarra_y = drawBarLenght / 2 * Math.sin(barraPosActual); //Coordenada en y del extremo izquierdo de la barra
-
-    //Dibujar resorte 1
-    drawSpring(-drawBarLenght / 2, -195, -(extremoIzqBarra_x / 2), -extremoIzqBarra_y - 5, 50, resorte1Color); //x1, y1; x2, y2, numCoils
-
-    // Rota el sistema de coordenadas
-    rotate(barraPosActual);
-
-    // Dibuja la barra
-    fill(barColor);
-    rect((-drawBarLenght / 2), -10, drawBarLenght, 20);
-
-    // Dibuja el eje de rotación
-    fill(ejeColor);
-    circle(0, 0, 3);
-
-    //Rotar el sistema a la posición original
-    rotate(2 * Math.PI - barraPosActual);
-
-    //Obtener coordenadas del extremo derecho de la barra
-    let extremoDerBarra_x = -drawBarLenght * Math.cos(barraPosActual); //Coordenada en x del extremo izquierdo de la barra
-    let extremoDerBarra_y = drawBarLenght / 2 * Math.sin(barraPosActual); //Coordenada en y del extremo izquierdo de la barra
-
-    //Obtener un punto medio entre la barra y el suelo
-    let defaultPosEsfera_x = -((drawBarLenght / 2) + (-extremoDerBarra_x / 2)) / 2;
-    let defaultPosEsfera_y = (extremoDerBarra_y + 196) / 2;
-    fill("#f00");
-
-    //Obtener coordenadas de los extremos superior e inferior de la esfera
-    let extremoSuperiorEsfera_y = defaultPosEsfera_y + esferaPosActual - 10;
-    let extremoInferiorEsfera_y = defaultPosEsfera_y + esferaPosActual + 10;
-    let extremoSuperiorEsfera_x = -defaultPosEsfera_x;
-    let extremoInferiorEsfera_x = -defaultPosEsfera_x;
-
-    //Dibujar resorte 2
-    drawSpring(-extremoDerBarra_x / 2, extremoDerBarra_y, extremoSuperiorEsfera_x, extremoSuperiorEsfera_y, 25, resorte2Color);//x1, y1; x2, y2, numCoils
-
-    //Dibujar resorte 3
-    drawSpring(extremoSuperiorEsfera_x, extremoInferiorEsfera_y, drawBarLenght / 2, 196, 25, resorte3Color);//x1, y1; x2, y2, numCoils
-
-    //Dibujar la esfera
-    fill(esferaColor);
-    circle(-defaultPosEsfera_x, esferaPosActual + defaultPosEsfera_y, 20);
-
-    // Incrementa el tiempo
-    t += dt;
-}
-
 function drawSpring(x1, y1, x2, y2, numCoilss, color) {
     //line(x1, y1, x2, y2);
     let numCoils = numCoilss;
@@ -256,9 +346,9 @@ function drawSpring(x1, y1, x2, y2, numCoilss, color) {
         let x = lerp(x1, x2, t);
         let y = lerp(y1, y2, t);
         if (i % 2 === 0) {
-            vertex(x + 5, y);
+            vertex(x + 5*scaleFactor, y);
         } else {
-            vertex(x - 5, y);
+            vertex(x - 5*scaleFactor, y);
         }
     }
     endShape();
