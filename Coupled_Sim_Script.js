@@ -33,6 +33,7 @@ document.addEventListener('modeUpdated', function (e) {
     const inputData = e.detail;
     console.log('Modo vibración:', inputData);
     modoVibracion = parseInt(inputData.mode);
+    actualizarGrafica();
 });
 
 document.addEventListener('inputDataUpdated', function (e) {
@@ -48,7 +49,9 @@ document.addEventListener('inputDataUpdated', function (e) {
     esfera_pos_inicial = parseFloat(inputData.esfera_pos_inicial);
     I = (barra_m * (barra_l * barra_l)) / 12;
     t = 0;
+
     inicializarEcuaciones();
+    actualizarGrafica();
 });
 
 document.addEventListener('startAnimation', function (e) {
@@ -62,8 +65,9 @@ function setup() {
     windowResized();
     noLoop();
     canvasWidth = canvasDiv.offsetWidth;
-    
     scaleFactor = canvasWidth / 800; 
+
+    crearGrafica();
 }
 
 function windowResized() {
@@ -545,4 +549,172 @@ function inicializarEcuaciones() {
 
     document.getElementById('modo2').innerHTML = `θ₂(t) = (${coeficientesAmplitudes.A2.toFixed(3)})Cos((${omega2.toFixed(3)})t) <br>
     X₂(t) = (${coeficientesAmplitudes.B2.toFixed(3)})Cos((${omega2.toFixed(3)})t)`;
+}
+
+function generarDatosGrafica(duracion, pasos) {
+    let datos = {
+        barra_posicion: [],
+        esfera_posicion: []
+    };
+    for (let i = 0; i <= pasos; i++) {
+        let tiempo = (i / pasos) * duracion;
+        let posicion_barra = 0, posicion_esfera = 0;
+        switch (modoVibracion)
+        {
+        case 0:
+            posicion_barra = modoGeneralVibracion(tiempo).barra;
+            posicion_esfera = modoGeneralVibracion(tiempo).esfera;
+            break;
+        case 1:
+            posicion_barra = primerModoVibracion(tiempo).barra;
+            posicion_esfera = primerModoVibracion(tiempo).esfera;
+            break;
+        case 2:
+            posicion_barra = segundoModoVibracion(tiempo).barra;
+            posicion_esfera = segundoModoVibracion(tiempo).esfera;
+            break;
+        default:
+            posicion_barra = modoGeneralVibracion(tiempo).barra;
+            posicion_esfera = modoGeneralVibracion(tiempo).esfera;
+            break;
+        }
+
+        datos.barra_posicion.push({x: tiempo, y: posicion_barra});
+        datos.esfera_posicion.push({x: tiempo, y: posicion_esfera});
+    }
+    return datos;
+}
+
+function crearGrafica() {
+    let ctx = document.getElementById('grafica').getContext('2d');
+    grafica = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: 'Ángulo de la barra (rad)',
+                data: generarDatosGrafica(10, 1000),  // Aumentamos a 1000 puntos
+                borderColor: '#a8f808',
+                backgroundColor: '#a8f80844',
+                borderWidth: 2,
+                pointRadius: 0,
+                fill: false,
+                tension: 0.4
+            }, {
+                label: 'Pocisión de la esfera (m)',
+                data: generarDatosGrafica(10, 1000),
+                borderColor: '#8080f8',
+                backgroundColor: '#8080f844',
+                borderWidth: 2,
+                pointRadius: 0,
+                fill: false,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 0
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Ángulo de la barra y Posición de la esfera vs Tiempo',
+                    font: {
+                        size: 18,
+                        weight: 'bold'
+                    },
+                    padding: {
+                        top: 10,
+                        bottom: 30
+                    }
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                }
+            },
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: {
+                        display: true,
+                        text: 'Tiempo (s)',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    },
+                    ticks: {
+                        font: {
+                            size: 12
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Valor',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    },
+                    ticks: {
+                        font: {
+                            size: 12
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function actualizarGrafica() {
+    let datos = generarDatosGrafica(100, 100);
+    grafica.data.datasets[0].data = datos.barra_posicion;
+    grafica.data.datasets[1].data = datos.esfera_posicion;
+    
+
+    //Variables
+    let I = (barra_m * (barra_l * barra_l)) / 12;
+    let a = I * esfera_m;  // a = Im
+    let b = (-I * (k2 + k3) - esfera_m * (k1 * barra_l * barra_l / 4 + k2 * barra_l * barra_l / 4));
+    let c = ((k1 * barra_l * barra_l / 4 + k2 * barra_l * barra_l / 4) * (k2 + k3) - Math.pow(k2 * barra_l / 2, 2));  
+    let omega1 = Math.sqrt((-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+    let omega2 = Math.sqrt((-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+    let amplitud1 = calcularRelacionesAmplitudes(omega1);
+    let amplitud2 = calcularRelacionesAmplitudes(omega2);
+
+    let maxValor = Math.max(
+        Math.abs(amplitud1),
+        Math.abs(amplitud2)
+    );
+
+    grafica.options.scales.y.min = -maxValor * 1.1;
+    grafica.options.scales.y.max = maxValor * 1.1;
+    
+    grafica.update();
 }
