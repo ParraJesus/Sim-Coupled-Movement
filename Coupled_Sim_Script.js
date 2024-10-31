@@ -508,18 +508,13 @@ function inicializarEcuaciones() {
     document.getElementById('formula_evaluada_ED_2').innerHTML = `(${esfera_m})(x'') + ((${k2})(${barra_l})/2)θ + ((${k2}) + (${k3}))x + (${esfera_m})(9.8) = 0`; //Valor
 
     //Frecuencias naturales
-    document.getElementById('formula_general_frecuencia_1').innerHTML = `aω⁴ + bω² + c = 0`; //Fórmula
-
     //Fórmula de a
-    document.getElementById('formula_coeficiente_a').innerHTML = `a = Lm`; //Fórmula 
     document.getElementById('formula_evaluada_coeficiente_a').innerHTML = `a = ${a}`; //Valor
 
     //Fórmula de b
-    document.getElementById('formula_coeficiente_b').innerHTML = `b = (-I(k₁ + k₂) - m[k₀l²/4 + k₁l²/4])`; //Fórmula 
     document.getElementById('formula_evaluada_coeficiente_b').innerHTML = `b = ${b}`; //Valor
 
     //Fórmula de c
-    document.getElementById('formula_coeficiente_c').innerHTML = `c = [k₀l²/4 + k₁l²/4](k₁ + k₂) - (k₁l/2)²`; //Fórmula 
     document.getElementById('formula_evaluada_coeficiente_c').innerHTML = `c = ${c}`; //Valor
 
     //Fórmula w1 y w2
@@ -531,24 +526,13 @@ function inicializarEcuaciones() {
     document.getElementById('amplitud2').innerHTML = `A₂/B₂ = ${amplitud2}`; //Valor
 
     //Fórmula sol de osciladores
-    document.getElementById('formula_sol_ED_1').innerHTML = `θ(t) = A₁Cos(ω₁t + Φ) + A₂Cos(ω₂t + Φ)`; //Barra
+    /*document.getElementById('formula_sol_ED_1').innerHTML = `θ(t) = A₁Cos(ω₁t + Φ) + A₂Cos(ω₂t + Φ)`; //Barra
     document.getElementById('formula_sol_ED_2').innerHTML = `X(t) = B₁Cos(ω₁t + Φ) + B₂Cos(ω₂t + Φ)`; //Esfera
-
-    //MODOS DE VIBRACION
-    document.getElementById('primer_modo').innerHTML = `θ₁(t) = (A₁/B₁)B₁Cos(ω₁t) <br>
-    X₁(t) = B₁Cos(ω₁t + Φ)`;
-    document.getElementById('segundo_modo').innerHTML = `θ₂(t) = (A₂/B₂)B₂Cos(ω₂t) <br>
-    X₂(t) = B₂Cos(ω₂t + Φ)`;
-
+*/
     //EVALUANDO LAS SOLUCIONES GENERALES CON A1, A2, B1, B2 CALCULADAS
     document.getElementById('modo0').innerHTML = `θ₁(t) = (${coeficientesAmplitudes.A1.toFixed(3)})Cos((${omega1.toFixed(3)})t) + (${coeficientesAmplitudes.A2.toFixed(3)})Cos((${omega2.toFixed(3)})t) <br>
     X₁(t) = (${coeficientesAmplitudes.B1.toFixed(3)})Cos((${omega1.toFixed(3)})t) + (${coeficientesAmplitudes.B2.toFixed(3)})Cos((${omega2.toFixed(3)})t)`;
 
-    document.getElementById('modo1').innerHTML = `θ₁(t) = (${coeficientesAmplitudes.A1.toFixed(3)})Cos((${omega1.toFixed(3)})t) <br>
-    X₁(t) = (${coeficientesAmplitudes.B1.toFixed(3)})Cos((${omega1.toFixed(3)})t)`;
-
-    document.getElementById('modo2').innerHTML = `θ₂(t) = (${coeficientesAmplitudes.A2.toFixed(3)})Cos((${omega2.toFixed(3)})t) <br>
-    X₂(t) = (${coeficientesAmplitudes.B2.toFixed(3)})Cos((${omega2.toFixed(3)})t)`;
 }
 
 function generarDatosGrafica(duracion, pasos) {

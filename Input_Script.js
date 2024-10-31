@@ -16,7 +16,7 @@ function initializeInput(inputId)
         updateDataButton.style.backgroundColor = "#e09363";
     });
 }
-
+/*
 generalModeButton.style.backgroundColor = "#686898";
 function vibrationMode_0()
 {
@@ -34,7 +34,7 @@ function vibrationMode_0()
 
     document.dispatchEvent(onModeUpdated);
 }
-
+*//*
 function vibrationMode_1()
 {
     currentMode = 1;
@@ -68,7 +68,7 @@ function vibrationMode_2()
 
     document.dispatchEvent(onModeUpdated);
 }
-
+*/
 //  almacena en una variable la información de los input range
 function getInputData() {
     const data = {
@@ -118,7 +118,3 @@ initializeInput("sphere_initial_pos_input");
 
 updateDataButton.addEventListener("click", getInputData);
 startAnimButton.addEventListener("click", startAnim);
-
-generalModeButton.addEventListener("click", vibrationMode_0);
-firstModeButton.addEventListener("click", vibrationMode_1);
-secondModeButton.addEventListener("click", vibrationMode_2);
