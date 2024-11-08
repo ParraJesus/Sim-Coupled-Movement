@@ -496,13 +496,8 @@ function inicializarEcuaciones() {
 
     let coeficientesAmplitudes = calcularCoeficientesAmplitud(barra_pos_inicial, esfera_pos_inicial, amplitud1, amplitud2);
 
-    //Lagrangriano
-    document.getElementById('formula_lagrangiano').innerHTML = `L = (1/2)I(θ')² + (1/2)m(x')² - [(1/2)k₀(l/2θ)² + (1/2)k₁(l/2θ + x)² + (1/2)k₂x² + mgx]`; //Fórmula
     document.getElementById('formula_evaluada_lagrangiano').innerHTML = `L = (1/2)(${I.toFixed(3)})(θ')² + (1/2)(${esfera_m})(x')² - [(1/2)(${k1})(l/2θ)² + (1/2)(${k2})(l/2θ + x)² + (1/2)(${k3})x² + (${esfera_m})(9.8)x]`; //Valor
 
-    //Ecuaciones Diferenciales
-    document.getElementById('formula_ED_1').innerHTML = `I(θ'') + (k₀l²/4)θ + (k₁l²/4)θ + (k₁l/2)x = 0`; //Fórmula
-    document.getElementById('formula_ED_2').innerHTML = `m(x'') + (k₁l/2)θ + (k₁ + k₂)x + mg = 0`; //Fórmula
 
     document.getElementById('formula_evaluada_ED_1').innerHTML = `I(θ'') + ((${k1})(${barra_l})²/4)θ + ((${k2})(${barra_l})²/4)θ + ((${k2})(${barra_l})/2)x = 0`; //valor
     document.getElementById('formula_evaluada_ED_2').innerHTML = `(${esfera_m})(x'') + ((${k2})(${barra_l})/2)θ + ((${k2}) + (${k3}))x + (${esfera_m})(9.8) = 0`; //Valor
